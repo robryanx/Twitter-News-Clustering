@@ -1,0 +1,32 @@
+<!-- BEGIN: tweet_display -->
+	<div style="float: left;" class="user_box">
+		<B>Welcome!</B><br />
+		Tweets Rated: <span id="rated">{rated}</span><br />
+		Not News: <span id="no_news">{no_news}</span><br />
+		News: <span id="news">{news}</span><br />
+		News (Op): <span id="news_op">{news_op}</span>
+	</div>
+	<div style="float: left;">
+		<div id="all_tweets">
+		<!-- BEGIN: tweet_box -->
+			<div class="tweet_box" id="tweet_{id}">
+				<div style="float: left; width: 420px; padding-left: 5px; padding-right: 5px;">
+					{tweet_text}
+					<div style="margin-top: 5px;">
+						<input onclick="vote({id}, 0)" type="button" value="Not News!">&nbsp;
+						<input onclick="vote({id}, 1)" type="button" value="News (Reporting)">&nbsp;
+						<input onclick="vote({id}, 2)" type="button" value="News (Opinion)">
+					</div>
+				</div>
+				<div style="float: right; width: 115px; padding-right: 5px;">
+					<a class="smalllink" href="http://twitter.com/{user}/status/{tweet_id}">{user}</a><br />
+					{time}<br />
+					{date}
+				</div>
+				<div style="clear: both;"></div>
+			</div>
+		<!-- END: tweet_box -->
+		</div>
+	</div>
+	<div style="clear: both"></div>
+<!-- END: tweet_display -->

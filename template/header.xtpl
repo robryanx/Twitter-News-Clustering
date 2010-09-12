@@ -1,0 +1,27 @@
+<!-- BEGIN: header -->
+<html>
+<head>
+<title>AffClicks</title>
+<link rel="stylesheet" media="screen" href="css/main.css" type="text/css" />
+<!-- BEGIN: javascript_includes -->
+	<script type="text/javascript" src="{include_path}"></script>
+<!-- END: javascript_includes -->
+<script type="text/javascript">
+	// javascript stored ajax templates
+	{js_templates}
+	
+	// pass through js varibles
+	{pass_through}
+	
+	// onload functions
+	//$(document).ready(function() {
+		{onload_functions}
+	//});
+</script>
+</head>
+<body>
+<div class="website_wrap">
+	<div class="logo">
+		<img src="images/logo.gif" />
+	</div>
+<!-- END: header -->
