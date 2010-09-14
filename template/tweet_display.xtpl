@@ -1,10 +1,18 @@
 <!-- BEGIN: tweet_display -->
-	<div style="float: left;" class="user_box">
-		<B>Welcome!</B><br />
-		Tweets Rated: <span id="rated">{rated}</span><br />
-		Not News: <span id="no_news">{no_news}</span><br />
-		News: <span id="news">{news}</span><br />
-		News (Op): <span id="news_op">{news_op}</span>
+	<div style="float: left;">
+		<div class="user_box">
+			<span style="font-weight: bold;">Welcome!</span><br />
+			Tweets Rated: <span id="rated">{rated}</span><br />
+			Not News: <span id="no_news">{no_news}</span><br />
+			News: <span id="news">{news}</span><br />
+			News (Op): <span id="news_op">{news_op}</span>
+		</div>
+		<div class="user_box" style="margin-top: 5px;">
+			<span style="font-weight: bold;">Top List</span><br />
+			<!-- BEGIN: top_list -->
+				{ip}{you} - {num_classified}<br />
+			<!-- END: top_list -->
+		</div>
 	</div>
 	<div style="float: left;">
 		<div id="all_tweets">
@@ -13,9 +21,10 @@
 				<div style="float: left; width: 420px; padding-left: 5px; padding-right: 5px;">
 					{tweet_text}
 					<div style="margin-top: 5px;">
-						<input onclick="vote({id}, 0)" type="button" value="Not News!">&nbsp;
-						<input onclick="vote({id}, 1)" type="button" value="News (Reporting)">&nbsp;
-						<input onclick="vote({id}, 2)" type="button" value="News (Opinion)">
+						<input onclick="vote({id}, 1); return false;" type="button" value="Not News!">&nbsp;
+						<input onclick="vote({id}, 2); return false;" type="button" value="News (Reporting)">&nbsp;
+						<input onclick="vote({id}, 3); return false;" type="button" value="News (Opinion)">&nbsp;
+						<input onclick="skip({id}); return false;" type="button" value="Skip">
 					</div>
 				</div>
 				<div style="float: right; width: 115px; padding-right: 5px;">

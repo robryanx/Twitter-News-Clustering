@@ -24,4 +24,14 @@
 	<div class="logo">
 		<img src="images/logo.gif" />
 	</div>
+	<div class="logo" style="text-align: justify;">
+		Hi there! What's this gem of a website you have stumbled across? Basically I am attempting to classify random Tweets broadly into news and not news classes; additionally 
+		I am attempting to split up news reporting and new opinion. 	Why you may ask? Well this is the first step, the real "i need grad students for this" manual labour for my honours 
+		thesis into identifying news on Twitter in real-time by clustering. Why would you want to help? No reason really, you might find it enjoyable for some reason to read loads of random
+		Tweets and you know you'll be contributing to my awesome research :). 
+		<br /><br />
+		If nothing else this interface will help me do the grunt work myself quicker. Perfect accurate classification isn't really a worry for me at this stage, so whatever your instinct on group is 
+		fine. I'll probably go over the stuff classified as news later anyway. And yes, at this stage there is a horribly large amount of noise due to just having random Tweets.
+
+	</div>
 <!-- END: header -->
