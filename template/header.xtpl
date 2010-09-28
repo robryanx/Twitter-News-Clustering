@@ -1,7 +1,7 @@
 <!-- BEGIN: header -->
 <html>
 <head>
-<title>AffClicks</title>
+<title>Train My Classifier</title>
 <link rel="stylesheet" media="screen" href="css/main.css" type="text/css" />
 <!-- BEGIN: javascript_includes -->
 	<script type="text/javascript" src="{include_path}"></script>

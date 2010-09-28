@@ -34,6 +34,12 @@ function vote(tweet_id, vote)
 				$('#rated').html(rated);
 				$('#' + vote_lookup[vote]).html(rated_score);
 				
+				$('#total_rated').html(obj['total']);
+				for(i=1; i<vote_lookup.length; i++)
+				{
+					$('#total_' + vote_lookup[i]).html(obj['total_' + i]);
+				}
+				
 				tweets_displayed--;
 				if(tweets_displayed < 8)
 				{

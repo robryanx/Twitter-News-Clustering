@@ -13,6 +13,13 @@
 				{ip}{you} - {num_classified}<br />
 			<!-- END: top_list -->
 		</div>
+		<div class="user_box" style="margin-top: 5px;">
+			<span style="font-weight: bold;">Totals</span><br />
+			Tweets Rated: <span id="total_rated">{total_rated}</span><br />
+			Not News: <span id="total_no_news">{total_no_news}</span><br />
+			News: <span id="total_news">{total_news}</span><br />
+			News (Op): <span id="total_news_op">{total_news_op}</span>
+		</div>
 	</div>
 	<div style="float: left;">
 		<div id="all_tweets">
@@ -30,7 +37,8 @@
 				<div style="float: right; width: 115px; padding-right: 5px;">
 					<a class="smalllink" href="http://twitter.com/{user}/status/{tweet_id}">{user}</a><br />
 					{time}<br />
-					{date}
+					{date}<br />
+					Guess: {guess}
 				</div>
 				<div style="clear: both;"></div>
 			</div>

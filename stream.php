@@ -56,6 +56,15 @@ class stream extends page_base
 			$this->db->query("INSERT INTO `votes` (`tweet_id`, `vote`, `ip`, `time`)
 									VALUES(".$tweet_id.", ".$vote.", '".$_SERVER['REMOTE_ADDR']."', ".(time()+$this->settings['timezone_offset']).")");			
 			$return['success'] = 1;
+			
+			// get new vote totals
+			$return['total'] = 0;
+			$this->db->query("SELECT COUNT(*) as votes, vote FROM `votes` GROUP BY `vote`");
+			while($get_totals = $this->db->fetch_row())
+			{
+				$return['total_'.$get_totals['vote']] = $get_totals['votes'];
+				$return['total'] += $get_totals['votes'];
+			}
 		}
 		
 		echo json_encode($return);
@@ -83,38 +92,88 @@ class stream extends page_base
 		
 		// get current user totals
 		// get a list of tweets voted on by the current user
+		$user_voted_list = array();
 		$voted_list = array();
 		$rated = $no_news = $news = $news_op = 0;
+		$total_rated = $total_no_news = $total_news = $total_news_op = 0;
 		
-		$this->db->query("SELECT * FROM `votes` WHERE `ip`='".$_SERVER['REMOTE_ADDR']."'");
+		// WHERE `ip`='".."'
+		$this->db->query("SELECT * FROM `votes`");
 		while($votes = $this->db->fetch_row())
 		{
-			$voted_list[$votes['tweet_id']] = 1;
-			$rated++;
+			if($votes['ip'] == $_SERVER['REMOTE_ADDR'])
+			{
+				if(empty($user_votes_list[$votes['tweet_id']]))
+				{
+					$rated++;
+					switch($votes['vote'])
+					{
+						case 1:
+							$no_news++;
+						break;
+						case 2:
+							$news++;
+						break;
+						case 3:
+							$news_op++;
+						break;
+					}
+				}
+				
+				$user_voted_list[$votes['tweet_id']] = 1;
+			}
 			
+			$total_rated++;
 			switch($votes['vote'])
 			{
 				case 1:
-					$no_news++;
+					$total_no_news++;
 				break;
 				case 2:
-					$news++;
+					$total_news++;
 				break;
 				case 3:
-					$news_op++;
+					$total_news_op++;
 				break;
 			}
+			$voted_list[$votes['tweet_id']] = 1;
 		}
 		
 		if(sizeof($voted_list) == 0)
 		{
 			$voted_list[0] = 1;
 		}
+
+		// check how many tweets with no votes 
+		$this->db->query("SELECT id FROM `init_tweets`");
+		$total_tweets = $this->db->rows();
 		
+		if(($total_tweets - sizeof($voted_list)) > 1000)
+		{
+			$extra = " AND `id`NOT IN(".implode(",", array_keys($voted_list)).")";
+		}
+		else
+		{
+			$extra = "";
+		}
+		
+		$classify = new classify(array(1=>"no_news", 2=>"news", 3=>"news_op"), array(), false);
+		$classify->add_tweets();
+		$type = array(1=>"Not News", 2=>"News Rp", 3=>"News Op");
+
 		$return_tweets = array();
-		$this->db->query("SELECT * FROM `init_tweets` WHERE `id`NOT IN(".implode(",", array_keys($voted_list)).") ORDER BY RAND() LIMIT ".$limit);
+		if(sizeof($user_voted_list) != 0)
+		{
+			$user_extra = "AND `id`NOT IN(".implode(",", array_keys($user_voted_list)).")"; 
+		}
+		else
+		{
+			$user_extra = "";
+		}
+		$this->db->query("SELECT * FROM `init_tweets` WHERE 1 ".$user_extra.$extra." AND `guess`NOT IN(0,1) ORDER BY RAND() LIMIT ".$limit);
 		while($tweet = $this->db->fetch_row())
 		{
+			
 			$return_tweet = array(
 				"id"=>$tweet['id'],
 				"tweet_text"=>$tweet['tweet'],
@@ -122,6 +181,7 @@ class stream extends page_base
 				"user"=>$tweet['user'],
 				"time"=>date("g:i a", $tweet['created']),
 				"date"=>date("d/m/Y", $tweet['created']),
+				"guess"=>$type[$classify->classify_tweet($tweet['tweet'])]
 			);
 			
 			if($this->ajax == 1)
@@ -159,6 +219,11 @@ class stream extends page_base
 			$tmpl_tweet_display->assign('no_news', $no_news);
 			$tmpl_tweet_display->assign('news', $news);
 			$tmpl_tweet_display->assign('news_op', $news_op);
+			
+			$tmpl_tweet_display->assign('total_rated', $total_rated);
+			$tmpl_tweet_display->assign('total_no_news', $total_no_news);
+			$tmpl_tweet_display->assign('total_news', $total_news);
+			$tmpl_tweet_display->assign('total_news_op', $total_news_op);
 		
 			$tmpl_tweet_display->parse("tweet_display");
 			$this->template_out = &$tmpl_tweet_display;
@@ -168,10 +233,10 @@ class stream extends page_base
 			$return['success'] = 1;
 			$return['tweets'] = $return_tweets;
 			
-			echo json_encode($return);
+			echo json_encode(utf8json($return));
 		}
-	}
-	
+	}	
+
 	private function fill($values, &$collect)
 	{
 		if($this->ajax == 0)

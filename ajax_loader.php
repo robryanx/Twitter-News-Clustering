@@ -21,6 +21,36 @@ include_once("page_base.php");
 $action = $_GET['action'];
 $json_data = $_GET['json_string'];
 
+$depth = 0;
+
+function utf8json($inArray) 
+{
+	global $depth;
+
+	/* our return object */
+	$newArray = array();
+
+	/* safety recursion limit */
+	$depth++;
+	if($depth >= 30) {
+		return false;
+	}
+
+	/* step through inArray */
+	foreach($inArray as $key=>$val) {
+		if(is_array($val)) {
+			/* recurse on array elements */
+			$newArray[$key] = utf8json($val);
+		} else {
+			/* encode string values */
+			$newArray[$key] = utf8_encode($val);
+		}
+	}
+
+	/* return utf8 encoded array */
+	return $newArray;
+} 
+
 switch($action)
 {
 	case "vote":
@@ -29,6 +59,7 @@ switch($action)
 		$main_class->add_vote($json_data);
 	break;
 	case "get_tweets":
+		include_once("classify.php");
 		include_once("stream.php");
 		$main_class = new stream(1);
 		$main_class->get_tweets($json_data);

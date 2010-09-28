@@ -26,13 +26,33 @@ include_once("js_ajax_templates.php");
 $js_tmpl = new js_templates($tmpl_header);
 
 include_once("page_base.php");
-
+	
 $page = $_GET['page'];
+$tweet = $_GET['tweet'];
 
 switch($page)
 {
+	case "classify_single":
+		include_once("classify.php");
+		$main_class = new classify(array(1=>"no_news", 2=>"news", 3=>"news_op"), array(), true);
+		$main_class->add_tweets();
+		
+		$main_class->classify_tweet(urldecode($tweet));
+	break;
+	case "classify":
+		include_once("classify.php");
+		$main_class = new classify();
+		$main_class->add_tweets();
+		
+		$db->query("SELECT * FROM `init_tweets`");
+		while($tweet = $db->fetch_row())
+		{
+			$db->query("UPDATE `init_tweets` SET `guess`='".$main_class->classify_tweet($tweet['tweet'])."' WHERE `id`=".$tweet['id'], true);
+		}
+	break;
 	default:
 		$page = "tweet_display";
+		include_once("classify.php");
 		include_once("stream.php");
 		$main_class = new stream();
 		$main_class->get_tweets();
